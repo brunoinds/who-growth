@@ -241,7 +241,7 @@ class CalculatorTools{
             }
         })();
         const listDocumentsWHODocuments = (whoDocumentsFolderName) => {
-            const whoDocumentsFolder = fs.readdirSync(__dirname$1 + `/../../resources/WHODocuments/${whoDocumentsFolderName}`);
+            const whoDocumentsFolder = fs.readdirSync(__dirname$1 + `/resources/WHODocuments/${whoDocumentsFolderName}`);
             return whoDocumentsFolder;
         };
         
@@ -277,7 +277,7 @@ class CalculatorTools{
             throw `Could not found a WHODocument that matches the calculator requirements.`
         }
 
-        return `${__dirname$1}/../../resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
+        return `${__dirname$1}/resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
     }
 }
 
