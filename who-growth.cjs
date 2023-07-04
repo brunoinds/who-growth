@@ -2,6 +2,8 @@
 
 var fs = require('fs');
 var XLSX = require('xlsx');
+var path = require('path');
+var url = require('url');
 
 class WHOResource{
     constructor(documentPath){
@@ -196,6 +198,10 @@ class PercentileCalculator{
     }
 }
 
+const __filename$1 = url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (document.currentScript && document.currentScript.src || new URL('who-growth.cjs', document.baseURI).href)));
+
+const __dirname$1 = path.dirname(__filename$1);
+
 const CalculatorTypes = {
     ZScore: "ZScore",
     Percentile: "Percentile"
@@ -235,7 +241,7 @@ class CalculatorTools{
             }
         })();
         const listDocumentsWHODocuments = (whoDocumentsFolderName) => {
-            const whoDocumentsFolder = fs.readdirSync(`./resources/WHODocuments/${whoDocumentsFolderName}`);
+            const whoDocumentsFolder = fs.readdirSync(__dirname$1 + `/../../resources/WHODocuments/${whoDocumentsFolderName}`);
             return whoDocumentsFolder;
         };
         
@@ -271,7 +277,7 @@ class CalculatorTools{
             throw `Could not found a WHODocument that matches the calculator requirements.`
         }
 
-        return `./resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
+        return `${__dirname$1}/../../resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
     }
 }
 

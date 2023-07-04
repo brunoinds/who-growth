@@ -1,5 +1,11 @@
 import fs from 'fs';
 import {PercentileCalculator} from './Calculators/Percentile/PercentileCalculator.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 const CalculatorTypes = {
     ZScore: "ZScore",
@@ -44,7 +50,7 @@ class CalculatorTools{
             }
         })();
         const listDocumentsWHODocuments = (whoDocumentsFolderName) => {
-            const whoDocumentsFolder = fs.readdirSync(`./resources/WHODocuments/${whoDocumentsFolderName}`);
+            const whoDocumentsFolder = fs.readdirSync(__dirname + `/../../resources/WHODocuments/${whoDocumentsFolderName}`);
             return whoDocumentsFolder;
         }
         
@@ -80,7 +86,7 @@ class CalculatorTools{
             throw `Could not found a WHODocument that matches the calculator requirements.`
         }
 
-        return `./resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
+        return `${__dirname}/../../resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
     }
 }
 

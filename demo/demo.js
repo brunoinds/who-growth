@@ -1,5 +1,5 @@
-import { Calculator } from './src/Calculator/Calculator.js';
-import { Patient } from './src/Patient/Patient.js';
+import { Calculator } from '../src/Calculator/Calculator.js';
+import { Patient } from '../src/Patient/Patient.js';
 
 const patient = new Patient({
     name: "John Doe",
