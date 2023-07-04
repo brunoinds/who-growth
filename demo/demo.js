@@ -11,4 +11,4 @@ const patient = new Patient({
 })
 
 const result = Calculator.load("Percentile", patient).calculateBMIForAge();
-//Return "P1"
+console.log(result);
