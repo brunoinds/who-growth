@@ -56,6 +56,9 @@ const result = patientCalculator.calculateWeightForHeight();
 3. Done!
 
 ## How to Install
+```javascript
+npm i who-growth
+```
 
 ## Use cases
 1. Calculate the WHO child growth Percentile and Z-Score based on the WHO website data
