@@ -5,7 +5,8 @@
   "main": "who-growth.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx rollup who-growth.js --file who-growth.cjs --format cjs"
+    "build": "npx rollup who-growth.js --file who-growth.cjs --format cjs",
+    "publishNPM": "npm version minor; npm publish"
   },
   "author": "Bruno Freire",
   "license": "ISC",
