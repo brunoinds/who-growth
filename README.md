@@ -56,7 +56,7 @@ const result = patientCalculator.calculateWeightForHeight();
 3. Done!
 
 ## How to Install
-```javascript
+```npm
 npm i who-growth
 ```
 
