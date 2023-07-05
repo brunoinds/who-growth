@@ -1,6 +1,6 @@
 {
   "name": "who-growth",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Calculate WHO child growth standards using JavaScript",
   "main": "who-growth.js",
   "scripts": {
