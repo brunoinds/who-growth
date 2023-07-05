@@ -2,8 +2,9 @@
 
 var fs = require('fs');
 var XLSX = require('xlsx');
-var esMain = require('es-main');
 var path = require('path');
+var process = require('process');
+var module$1 = require('module');
 var url = require('url');
 
 class WHOResource{
@@ -241,6 +242,28 @@ class Toolbox{
     static getExecutionType(){
         function isModule() {
             return typeof module !== 'undefined' && module.exports !== undefined;
+        }
+        function esMain(meta) {
+            function stripExt(name) {
+                const extension = path.extname(name);
+                if (!extension) {
+                    return name;
+                }
+                return name.slice(0, -extension.length);
+            }
+            if (!meta || !process.argv[1]) {
+                return false;
+            }
+
+            const require = module$1.createRequire(meta.url);
+            const scriptPath = require.resolve(process.argv[1]);
+            const modulePath = url.fileURLToPath(meta.url);
+
+            const extension = path.extname(scriptPath);
+            if (extension) {
+                return modulePath === scriptPath;
+            }
+            return stripExt(modulePath) === scriptPath;
         }
 
         if (isModule()){
