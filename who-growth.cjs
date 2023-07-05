@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var XLSX = require('xlsx');
+var esMain = require('es-main');
 var path = require('path');
 var url = require('url');
 
@@ -177,12 +178,12 @@ class PercentileCalculator{
         const whoResource = WHOResource.new(whoDocumentPath);
         return whoResource.matchCategory(this.patient.getWeeksAge(), this.patient.getHeight())
     }
-    calculatWeightForAge(){
+    calculateWeightForAge(){
         const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "Percentile", "WeightForAge");
         const whoResource = WHOResource.new(whoDocumentPath);
         return whoResource.matchCategory(this.patient.getWeeksAge(), this.patient.getWeight())
     }
-    calculatWeightForHeight(){
+    calculateWeightForHeight(){
         const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "Percentile", "WeightForHeight");
         const whoResource = WHOResource.new(whoDocumentPath);
         return whoResource.matchCategory(this.patient.getHeight(), this.patient.getWeight())
@@ -195,6 +196,66 @@ class PercentileCalculator{
 
     static init(patient){
         return new PercentileCalculator(patient);
+    }
+}
+
+class ZScoreCalculator{
+    constructor(patient){
+        this.patient = patient;
+    }
+    calculateHeightForAge(){
+        const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "ZScore", "HeightForAge");
+        const whoResource = WHOResource.new(whoDocumentPath);
+        return whoResource.matchCategory(this.patient.getWeeksAge(), this.patient.getHeight())
+    }
+    calculateWeightForAge(){
+        const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "ZScore", "WeightForAge");
+        const whoResource = WHOResource.new(whoDocumentPath);
+        return whoResource.matchCategory(this.patient.getWeeksAge(), this.patient.getWeight())
+    }
+    calculateWeightForHeight(){
+        const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "ZScore", "WeightForHeight");
+        const whoResource = WHOResource.new(whoDocumentPath);
+        return whoResource.matchCategory(this.patient.getHeight(), this.patient.getWeight())
+    }
+    calculateBMIForAge(){
+        const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "ZScore", "BMIForAge");
+        const whoResource = WHOResource.new(whoDocumentPath);
+        return whoResource.matchCategory(this.patient.getMonthsAge(), this.patient.getHeight())
+    }
+
+    static init(patient){
+        return new ZScoreCalculator(patient);
+    }
+}
+
+class Toolbox{
+    static generateID(){
+        let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        let r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+        return uuid;
+    }
+    static getExecutionType(){
+        function isModule() {
+            return typeof module !== 'undefined' && module.exports !== undefined;
+        }
+
+        if (isModule()){
+            if (require.main === module) {
+                return "Standalone"
+            } else {
+                return "Dependency"
+            }
+        }else {
+            if (esMain(({ url: (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (document.currentScript && document.currentScript.src || new URL('who-growth.cjs', document.baseURI).href)) }))) {
+                return "Standalone"
+            }else {
+                return "Dependency"
+            }
+        }
     }
 }
 
@@ -216,7 +277,7 @@ class Calculator{
     static load(type, patient){
         switch(type){
             case CalculatorTypes.ZScore:
-                //return ZScoreCalculator.init(patient);
+                return ZScoreCalculator.init(patient);
             case CalculatorTypes.Percentile:
                 return PercentileCalculator.init(patient);
             default:
@@ -225,9 +286,15 @@ class Calculator{
     }
 }
 
-
 class CalculatorTools{
     static retrieveWHODocumentPath(sex, ageInYears, calculatorType, calculatorName){
+        const dirStart = (() => {
+            if (Toolbox.getExecutionType() == "Dependency"){
+                return __dirname$1 + `/../../resources/WHODocuments`;
+            }else {
+                return __dirname$1 + `/resources/WHODocuments`;
+            }
+        })();
         const whoDocumentFolder = (() => {
             switch (calculatorName){
                 case CalculatorNames.WeightForAge:
@@ -241,7 +308,7 @@ class CalculatorTools{
             }
         })();
         const listDocumentsWHODocuments = (whoDocumentsFolderName) => {
-            const whoDocumentsFolder = fs.readdirSync(__dirname$1 + `/resources/WHODocuments/${whoDocumentsFolderName}`);
+            const whoDocumentsFolder = fs.readdirSync(`${dirStart}/${whoDocumentsFolderName}`);
             return whoDocumentsFolder;
         };
         
@@ -277,18 +344,7 @@ class CalculatorTools{
             throw `Could not found a WHODocument that matches the calculator requirements.`
         }
 
-        return `${__dirname$1}/resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
-    }
-}
-
-class Toolbox{
-    static generateID(){
-        let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        let r = Math.random() * 16 | 0,
-            v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-        return uuid;
+        return `${dirStart}/${whoDocumentFolder}/${documentsByAge[0]}`;
     }
 }
 
@@ -334,24 +390,6 @@ class Patient{
     getSex(){
         return this.sex;
     }
-
-    calculate(){
-        return {
-            percentile: {
-                heightForAge: CalculatorTools.load("Percentile", this).calculateHeightForAge,
-                weightForAge: CalculatorTools.load("Percentile", this).calculateWeightForAge,
-                weightForHeight: CalculatorTools.load("Percentile", this).calculateWeightForHeight,
-                bmiForAge: CalculatorTools.load("Percentile", this).calculateBMIForAge
-            },
-            zScore: {
-                heightForAge: CalculatorTools.load("ZScore", this).calculateHeightForAge,
-                weightForAge: CalculatorTools.load("ZScore", this).calculateWeightForAge,
-                weightForHeight: CalculatorTools.load("ZScore", this).calculateWeightForHeight,
-                bmiForAge: CalculatorTools.load("ZScore", this).calculateBMIForAge
-            }
-        }
-    }
-
     static new(patientData){
         return new Patient(patientData);
     }

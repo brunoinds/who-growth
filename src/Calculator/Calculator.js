@@ -1,5 +1,7 @@
 import fs from 'fs';
-import {PercentileCalculator} from './Calculators/Percentile/PercentileCalculator.js';
+import { PercentileCalculator } from './Calculators/Percentile/PercentileCalculator.js';
+import { ZScoreCalculator } from './Calculators/ZScore/ZScoreCalculator.js';
+import { Toolbox } from '../Tools/Toolbox.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -21,7 +23,7 @@ class Calculator{
     static load(type, patient){
         switch(type){
             case CalculatorTypes.ZScore:
-                //return ZScoreCalculator.init(patient);
+                return ZScoreCalculator.init(patient);
             case CalculatorTypes.Percentile:
                 return PercentileCalculator.init(patient);
             default:
@@ -30,9 +32,15 @@ class Calculator{
     }
 }
 
-
 class CalculatorTools{
     static retrieveWHODocumentPath(sex, ageInYears, calculatorType, calculatorName){
+        const dirStart = (() => {
+            if (Toolbox.getExecutionType() == "Dependency"){
+                return __dirname + `/../../resources/WHODocuments`;
+            }else{
+                return __dirname + `/resources/WHODocuments`;
+            }
+        })();
         const whoDocumentFolder = (() => {
             switch (calculatorName){
                 case CalculatorNames.WeightForAge:
@@ -50,7 +58,7 @@ class CalculatorTools{
             }
         })();
         const listDocumentsWHODocuments = (whoDocumentsFolderName) => {
-            const whoDocumentsFolder = fs.readdirSync(__dirname + `/../../resources/WHODocuments/${whoDocumentsFolderName}`);
+            const whoDocumentsFolder = fs.readdirSync(`${dirStart}/${whoDocumentsFolderName}`);
             return whoDocumentsFolder;
         }
         
@@ -86,7 +94,7 @@ class CalculatorTools{
             throw `Could not found a WHODocument that matches the calculator requirements.`
         }
 
-        return `${__dirname}/../../resources/WHODocuments/${whoDocumentFolder}/${documentsByAge[0]}`;
+        return `${dirStart}/${whoDocumentFolder}/${documentsByAge[0]}`;
     }
 }
 

@@ -10,12 +10,12 @@ class PercentileCalculator{
         const whoResource = WHOResource.new(whoDocumentPath);
         return whoResource.matchCategory(this.patient.getWeeksAge(), this.patient.getHeight())
     }
-    calculatWeightForAge(){
+    calculateWeightForAge(){
         const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "Percentile", "WeightForAge");
         const whoResource = WHOResource.new(whoDocumentPath);
         return whoResource.matchCategory(this.patient.getWeeksAge(), this.patient.getWeight())
     }
-    calculatWeightForHeight(){
+    calculateWeightForHeight(){
         const whoDocumentPath = CalculatorTools.retrieveWHODocumentPath(this.patient.getSex(), this.patient.getYearsAge(), "Percentile", "WeightForHeight");
         const whoResource = WHOResource.new(whoDocumentPath);
         return whoResource.matchCategory(this.patient.getHeight(), this.patient.getWeight())

@@ -47,24 +47,6 @@ class Patient{
     getSex(){
         return this.sex;
     }
-
-    calculate(){
-        return {
-            percentile: {
-                heightForAge: CalculatorTools.load("Percentile", this).calculateHeightForAge,
-                weightForAge: CalculatorTools.load("Percentile", this).calculateWeightForAge,
-                weightForHeight: CalculatorTools.load("Percentile", this).calculateWeightForHeight,
-                bmiForAge: CalculatorTools.load("Percentile", this).calculateBMIForAge
-            },
-            zScore: {
-                heightForAge: CalculatorTools.load("ZScore", this).calculateHeightForAge,
-                weightForAge: CalculatorTools.load("ZScore", this).calculateWeightForAge,
-                weightForHeight: CalculatorTools.load("ZScore", this).calculateWeightForHeight,
-                bmiForAge: CalculatorTools.load("ZScore", this).calculateBMIForAge
-            }
-        }
-    }
-
     static new(patientData){
         return new Patient(patientData);
     }
